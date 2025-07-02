@@ -51,7 +51,7 @@ const FortuneCookieCard = () => {
   const [showFortune, setShowFortune] = useState(false)
 
   // Get a random fortune that's different from the current one
-  const getRandomFortune = (current) => {
+  const getRandomFortune = (current: number) => {
     let newFortune
     do {
       newFortune = Math.floor(Math.random() * fortunes.length)

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   ArrowLeft, 
@@ -12,7 +12,6 @@ import {
   Heading, 
   Code,
   Smile,
-  Sparkles,
   Calendar,
   Edit3,
   Loader2
@@ -20,22 +19,21 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { easeInOut } from 'framer-motion'
 
 // Firebase imports
 import { 
   collection, 
   addDoc, 
-  getDocs, 
   doc, 
   updateDoc, 
   deleteDoc, 
   onSnapshot,
   orderBy,
   query,
-  serverTimestamp,
-  Timestamp
+  serverTimestamp
 } from 'firebase/firestore'
-import { db } from '../firebase'
+import { db } from '../firebase.ts'
 
 interface Note {
   id: string
@@ -44,7 +42,7 @@ interface Note {
   date: string
   sticker: string
   color: string
-  createdAt?: any
+  createdAt?: string | Date
 }
 
 interface NotesPageProps {
@@ -114,7 +112,7 @@ export default function NotesPage({ userName, onBack }: NotesPageProps) {
     )
 
     return () => unsubscribe()
-  }, [])
+  } )
 
   const formatText = (command: string) => {
     const textarea = textareaRef.current
@@ -621,7 +619,7 @@ export default function NotesPage({ userName, onBack }: NotesPageProps) {
               duration: 12 + Math.random() * 6,
               delay: i * 2,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: easeInOut
             }}
           >
             <Heart className="w-6 h-6" fill="currentColor" />

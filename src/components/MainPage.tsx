@@ -9,10 +9,11 @@ import ComplimentsCard from './ComplimentsCard'
 import FortuneCookieCard from './FortuneCookieCard'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { easeInOut } from 'framer-motion'
 
 interface MainPageProps {
   userName: string
-  onNavigate: (page: 'ask' | 'notes') => void
+  onNavigate: (page: 'main' | 'ask' | 'notes') => void
 }
 
 // New Love Notes Card Component
@@ -29,7 +30,7 @@ function LoveNotesCard({ onNavigate }: { onNavigate: (page: 'notes') => void }) 
             transition={{ 
               duration: 2, 
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: easeInOut
             }}
           >
             <PenTool className="w-8 h-8 text-white" />
@@ -49,9 +50,6 @@ function LoveNotesCard({ onNavigate }: { onNavigate: (page: 'notes') => void }) 
           <span className="text-2xl animate-bounce" style={{ animationDelay: '0.1s' }}>💕</span>
           <span className="text-2xl animate-bounce" style={{ animationDelay: '0.2s' }}>✨</span>
         </div>
-        {/* <div className="text-sm text-gray-500 bg-gradient-to-r from-pink-50 to-purple-50 p-3 rounded-lg border">
-          <strong className="text-pink-600">Features:</strong> Bold, Italic, Headers, Code, Emojis & More!
-        </div> */}
       </CardContent>
     </Card>
   )
@@ -80,7 +78,7 @@ export default function MainPage({ userName, onNavigate }: MainPageProps) {
       y: 0,
       scale: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100,
         damping: 15
       }
@@ -123,7 +121,7 @@ export default function MainPage({ userName, onNavigate }: MainPageProps) {
                 transition={{
                   duration: 5,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: easeInOut
                 }}
                 style={{
                   backgroundSize: '200% 200%'
@@ -156,7 +154,7 @@ export default function MainPage({ userName, onNavigate }: MainPageProps) {
                 transition={{ 
                   duration: 3, 
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: easeInOut
                 }}
                 className="absolute -top-6 -left-8 text-3xl"
               >
@@ -176,7 +174,7 @@ export default function MainPage({ userName, onNavigate }: MainPageProps) {
                 transition={{ 
                   duration: 2, 
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: easeInOut
                 }}
                 className="inline-block ml-2"
               >
@@ -348,7 +346,7 @@ export default function MainPage({ userName, onNavigate }: MainPageProps) {
                     transition={{ 
                       duration: 2, 
                       repeat: Infinity,
-                      ease: "easeInOut"
+                      ease: easeInOut
                     }}
                   >
                     <MessageCircle className="w-6 h-6 sm:w-8 sm:h-8" />
@@ -366,7 +364,7 @@ export default function MainPage({ userName, onNavigate }: MainPageProps) {
                     transition={{ 
                       duration: 3, 
                       repeat: Infinity,
-                      ease: "easeInOut"
+                      ease: easeInOut
                     }}
                   >
                     <Sparkles className="w-5 h-5 sm:w-7 sm:h-7" />
@@ -398,7 +396,7 @@ export default function MainPage({ userName, onNavigate }: MainPageProps) {
                   duration: 8 + Math.random() * 4,
                   delay: i * 1.5,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: easeInOut
                 }}
               >
                 <Heart className="w-4 h-4 sm:w-6 sm:h-6" fill="currentColor" />

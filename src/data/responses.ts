@@ -1,8 +1,25 @@
 // Enhanced Smart Response System for Noor's Chatbot
 // Now with context awareness, dynamic memory, and expanded responses
 
+// Define types for our response structure
+interface ResponseItem {
+  keywords: string[];
+  responses: string[];
+  priority?: number;
+}
+
+interface ResponsesCollection {
+  [category: string]: ResponseItem[];
+}
+
+interface ConversationContext {
+  lastTopic: string | null;
+  lastResponseTime: Date | null;
+  mood: 'positive' | 'negative' | 'angry' | 'neutral' | null;
+}
+
 // Complete enhanced responses database
-const responses = {
+const responses: ResponsesCollection = {
   // Identity and basic info - Expanded
   identity: [
     { 
@@ -495,28 +512,56 @@ const responses = {
   ],
 
   // Default responses for unmatched queries - More variations
-  default: [
-    "Ask me anything, babygirl! I'm here for you ❤️",
-    "What's on your mind, Zahar? 💭",
-    "Your man is listening... tell me more 👂❤️",
-    "I'm all yours, what do you want to know? 😘",
-    "Speak to me, my love 💬✨",
-    "You know I can't resist answering you - ask away! 💖",
-    "Hmm... try asking differently? Or just say 'فيننكك' - that always works 😂",
-    "I'm your personal chatbot - ask me anything about us! 💞",
-    "Your wish is my command, babygirl - what do you need to know? ✨"
+  greetings: [
+    {
+      keywords: ["hello", "hi", "hey", "start"],
+      responses: ["Ask me anything, babygirl! I'm here for you ❤️"],
+    },
+    {
+      keywords: ["hello", "talk", "chat"],
+      responses: ["What's on your mind, Zahar? 💭"],
+    },
+    {
+      keywords: ["listening", "you there", "are you there"],
+      responses: ["Your man is listening... tell me more 👂❤️"],
+    },
+    {
+      keywords: ["ask", "question", "tell"],
+      responses: ["I'm all yours, what do you want to know? 😘"],
+    },
+    {
+      keywords: ["speak", "talk"],
+      responses: ["Speak to me, my love 💬✨"],
+    },
+    {
+      keywords: ["ask", "question"],
+      responses: ["You know I can't resist answering you - ask away! 💖"],
+    },
+    {
+      keywords: ["فيننكك", "فينك", "فينكك", "فينككك", "فيننكك"],
+      responses: ["Hmm... try asking differently? Or just say 'فيننكك' - that always works 😂"],
+    },
+    {
+      keywords: ["chatbot", "you", "who"],
+      responses: ["I'm your personal chatbot - ask me anything about us! 💞"],
+    },
+    {
+      keywords: ["wish", "command", "need"],
+      responses: ["Your wish is my command, babygirl - what do you need to know? ✨"],
+    }
   ]
+
 };
 
 // Context tracking for smarter conversations
-let conversationContext = {
+const conversationContext: ConversationContext = {
   lastTopic: null,
   lastResponseTime: null,
   mood: null
 };
 
 // Enhanced synonym mapping with more variations
-const synonyms = {
+const synonyms: Record<string, string[]> = {
   love: ["love", "adore", "care", "heart", "feel", "feelings", "luv", "lov", "amour", "affection"],
   miss: ["miss", "long", "want", "need", "yearn", "mis", "crave"],
   beautiful: ["beautiful", "pretty", "gorgeous", "stunning", "cute", "lovely", "beautifull", "prety", "attractive"],
@@ -542,7 +587,7 @@ const synonyms = {
 };
 
 // Enhanced similarity function with better fuzzy matching
-function similarity(s1, s2) {
+function similarity(s1: string, s2: string): number {
   if (s1 === s2) return 1.0;
   
   const longer = s1.length > s2.length ? s1 : s2;
@@ -565,8 +610,8 @@ function similarity(s1, s2) {
   return similarity;
 }
 
-function levenshteinDistance(str1, str2) {
-  const matrix = [];
+function levenshteinDistance(str1: string, str2: string): number {
+  const matrix: number[][] = [];
   
   for (let i = 0; i <= str2.length; i++) {
     matrix[i] = [i];
@@ -594,21 +639,22 @@ function levenshteinDistance(str1, str2) {
 }
 
 // Enhanced function to expand query with synonyms
-function expandWithSynonyms(word) {
+function expandWithSynonyms(word: string): string[] {
   const expanded = [word.toLowerCase()];
   
-  for (const [key, values] of Object.entries(synonyms)) {
+  for (const values of Object.values(synonyms)) {
     if (values.includes(word.toLowerCase())) {
       expanded.push(...values.filter(v => v !== word.toLowerCase()));
       break;
     }
   }
+
   
   return [...new Set(expanded)];
 }
 
 // Enhanced preprocessing for Arabic and English text
-function preprocessQuery(question) {
+function preprocessQuery(question: string): string[] {
   return question.toLowerCase()
     .replace(/[^\w\s\u0600-\u06FF]/g, ' ') // Keep Arabic characters
     .replace(/\s+/g, ' ') // Multiple spaces to single space
@@ -618,7 +664,7 @@ function preprocessQuery(question) {
 }
 
 // Function to update conversation context
-function updateContext(category, question) {
+function updateContext(category: string, question: string): void {
   conversationContext.lastTopic = category;
   conversationContext.lastResponseTime = new Date();
   
@@ -635,29 +681,32 @@ function updateContext(category, question) {
 }
 
 // Function to get a random response from an array
-function getRandomResponse(responsesArray) {
+function getRandomResponse(responsesArray: string[]): string {
   return responsesArray[Math.floor(Math.random() * responsesArray.length)];
 }
 
 // Enhanced main function with better scoring and context awareness
-function findBestResponse(question) {
+function findBestResponse(question: string): string {
   const queryWords = preprocessQuery(question);
   
   // Handle Arabic phrases directly
   if (question.includes('فيننكك') || question.includes('فينك')) {
-    updateContext('communication', question);
-    return getRandomResponse(responses.communication.find(r => r.keywords.includes('فيننكك')).responses);
+    const arabicResponseItem = responses.communication.find(r => r.keywords.includes('فيننكك'));
+    if (arabicResponseItem) {
+      updateContext('communication', question);
+      return getRandomResponse(arabicResponseItem.responses);
+    }
   }
   
   // Expand query words with synonyms
-  const expandedWords = [];
+  const expandedWords: string[] = [];
   queryWords.forEach(word => {
     expandedWords.push(...expandWithSynonyms(word));
   });
   
-  let bestMatch = null;
+  let bestMatch: ResponseItem | null = null;
   let bestScore = 0;
-  let bestCategory = null;
+  let bestCategory: string | null = null;
   
   // Check all response categories
   for (const [category, responseList] of Object.entries(responses)) {
@@ -721,7 +770,7 @@ function findBestResponse(question) {
       const contextBonus = (conversationContext.lastTopic === category) ? 1.5 : 1;
       
       // Final score calculation
-      let finalScore = (score * matchPercentage * priorityBoost * contextBonus) + exactMatchBonus;
+      let finalScore = (score * matchPercentage * priorityBoost * contextBonus) + exactMatchBonus + fuzzyMatches * 1;
       
       // Boost score if we have good keyword coverage
       if (matchPercentage > 0.5) {
@@ -737,13 +786,13 @@ function findBestResponse(question) {
   }
   
   // Return best match or random default
-  if (bestMatch) {
+  if (bestMatch && bestCategory) {
     updateContext(bestCategory, question);
     return getRandomResponse(bestMatch.responses);
   } else {
     // If no match, try to relate to last topic
     if (conversationContext.lastTopic) {
-      const followUps = {
+      const followUps: Record<string, string[]> = {
         love: ["Still thinking about how much I love you. Ask me something else? ❤️", "My feelings for you haven't changed. What else is on your mind? 💭"],
         marriage: ["Still dreaming about our future together. What do you want to know? 💍", "I'm ready to plan the wedding whenever you are! 😘"],
         daily: ["How's your day going, babygirl? 🌞", "Tell me more about what you're up to! 💬"]
@@ -754,16 +803,17 @@ function findBestResponse(question) {
       }
     }
     
-    return getRandomResponse(responses.default);
+    return getRandomResponse(responses.greetings.flatMap(r => r.responses));
+
   }
 }
 
 // Proactive engagement - check if we should initiate conversation
-function checkForProactiveEngagement() {
+function checkForProactiveEngagement(): string | null {
   const now = new Date();
   const lastActive = conversationContext.lastResponseTime;
   
-  if (!lastActive || (now - lastActive) > 3600000) { // 1 hour
+  if (!lastActive || (now.getTime() - lastActive.getTime()) > 3600000) { // 1 hour
     const prompts = [
       "فيننكك 🙂🔪", 
       "Thinking of you... what are you up to? 💭",
@@ -778,7 +828,7 @@ function checkForProactiveEngagement() {
 }
 
 // Enhanced response function with proactive engagement
-export function getSmartResponse(question) {
+export function getSmartResponse(question?: string): string {
   if (!question || question.trim().length === 0) {
     const proactive = checkForProactiveEngagement();
     if (proactive) return proactive;
@@ -789,14 +839,14 @@ export function getSmartResponse(question) {
   const response = findBestResponse(question.trim());
   
   // Add occasional follow-up questions
-  if (Math.random() > 0.7) {
-    const followUps = {
+  if (Math.random() > 0.7 && conversationContext.lastTopic) {
+    const followUps: Record<string, string> = {
       love: " Do you know how much I adore you? ❤️",
       marriage: " When should we start planning for real? 😉",
       daily: " How are you feeling right now? 💖"
     };
     
-    if (conversationContext.lastTopic && followUps[conversationContext.lastTopic]) {
+    if (followUps[conversationContext.lastTopic]) {
       return response + followUps[conversationContext.lastTopic];
     }
   }
@@ -805,14 +855,14 @@ export function getSmartResponse(question) {
 }
 
 // Additional helper functions for testing
-export function testResponse(question) {
+export function testResponse(question: string): void {
   console.log(`Question: "${question}"`);
   console.log(`Response: "${getSmartResponse(question)}"`);
   console.log('---');
 }
 
 // Batch test function with more test cases
-export function runTests() {
+export function runTests(): void {
   const testCases = [
     "do you love me?",
     "what's my nam?",

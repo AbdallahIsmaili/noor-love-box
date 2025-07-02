@@ -34,7 +34,7 @@ const MemoryLaneCard = () => {
   )
   const [isFlipping, setIsFlipping] = useState(false)
 
-  const getRandomMemory = (current) => {
+  const getRandomMemory = (current: number) => {
     let newMemory
     do {
       newMemory = Math.floor(Math.random() * memories.length)

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Heart } from 'lucide-react'
 import { useMemo } from 'react'
+import { easeInOut } from 'framer-motion'
 
 const colors = ['#ff69b4', '#ff1493', '#ffb6c1', '#ffc0cb', '#dda0dd']
 
@@ -37,7 +38,7 @@ export default function FloatingHearts({ count = 20 }: FloatingHeartsProps) {
           duration,
           delay,
           repeat: Infinity,
-          ease: 'easeInOut'
+          ease: easeInOut
         }
       }
     })

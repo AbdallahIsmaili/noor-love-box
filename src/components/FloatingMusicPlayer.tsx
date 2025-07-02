@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { 
   Play, 
   Pause, 
@@ -165,15 +165,13 @@ export default function FloatingMusicPlayer({ autoPlay = true }: FloatingMusicPl
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
   
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
   const currentSong = favoriteSongs[currentSongIndex];
 
-  // Function to show love toast
-  const showLoveToast = () => {
+  const showLoveToast = useCallback(() => {
     const messages = [
       "For you, my love, I'd play this song a million times 💖",
       "This melody reminds me of your beautiful soul 🎶",
@@ -188,20 +186,34 @@ export default function FloatingMusicPlayer({ autoPlay = true }: FloatingMusicPl
     ];
     
     const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    console.log(randomMessage); // Since we don't have toast, we'll log it
-  };
+    console.log(randomMessage);
+  }, []);
+
+  const selectRandomSong = useCallback(() => {
+    const randomIndex = Math.floor(Math.random() * favoriteSongs.length);
+    setCurrentSongIndex(randomIndex);
+  }, []);
+
+  const nextSong = useCallback((random = false) => {
+    if (random) {
+      selectRandomSong();
+    } else {
+      setCurrentSongIndex((prev) => (prev + 1) % favoriteSongs.length);
+    }
+    setIsPlaying(true);
+  }, [selectRandomSong]);
 
   useEffect(() => {
     if (autoPlay && audioRef.current) {
-      selectRandomSong(); // Select random song on initial load
+      selectRandomSong();
       const timer = setTimeout(() => {
         audioRef.current?.play().catch(console.log);
         setIsPlaying(true);
-        showLoveToast(); // Show initial toast
+        showLoveToast();
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [autoPlay]);
+  }, [autoPlay, selectRandomSong, showLoveToast]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -210,7 +222,6 @@ export default function FloatingMusicPlayer({ autoPlay = true }: FloatingMusicPl
     const updateTime = () => setCurrentTime(audio.currentTime);
     const updateDuration = () => setDuration(audio.duration);
     const handleEnded = () => {
-      // Show toast before moving to next song
       showLoveToast();
       setTimeout(() => {
         nextSong();
@@ -226,9 +237,14 @@ export default function FloatingMusicPlayer({ autoPlay = true }: FloatingMusicPl
       audio.removeEventListener('loadedmetadata', updateDuration);
       audio.removeEventListener('ended', handleEnded);
     };
-  }, [currentSongIndex]);
+  }, [currentSongIndex, nextSong, showLoveToast]);
 
-  // Auto-play when song changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = isMuted ? 0 : volume;
+    }
+  }, [volume, isMuted]);
+
   useEffect(() => {
     const audio = audioRef.current;
     if (audio && isPlaying) {
@@ -237,12 +253,7 @@ export default function FloatingMusicPlayer({ autoPlay = true }: FloatingMusicPl
       }, 500);
       return () => clearTimeout(playTimer);
     }
-  }, [currentSongIndex]);
-
-  const selectRandomSong = () => {
-    const randomIndex = Math.floor(Math.random() * favoriteSongs.length);
-    setCurrentSongIndex(randomIndex);
-  };
+  }, [currentSongIndex, isPlaying]);
 
   const togglePlay = () => {
     if (audioRef.current) {
@@ -255,37 +266,19 @@ export default function FloatingMusicPlayer({ autoPlay = true }: FloatingMusicPl
     }
   };
 
-  const nextSong = (random = false) => {
-    if (random) {
-      selectRandomSong();
-    } else {
-      setCurrentSongIndex((prev) => (prev + 1) % favoriteSongs.length);
-    }
-    // Keep playing state true so new song auto-plays
-    setIsPlaying(true);
-  };
-
   const prevSong = () => {
     setCurrentSongIndex((prev) => (prev - 1 + favoriteSongs.length) % favoriteSongs.length);
-    // Keep playing state true so new song auto-plays
     setIsPlaying(true);
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
-    if (audioRef.current) {
-      audioRef.current.volume = newVolume;
-    }
     setIsMuted(newVolume === 0);
   };
 
   const toggleMute = () => {
-    if (audioRef.current) {
-      const newMuted = !isMuted;
-      setIsMuted(newMuted);
-      audioRef.current.volume = newMuted ? 0 : volume;
-    }
+    setIsMuted(!isMuted);
   };
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -307,14 +300,11 @@ export default function FloatingMusicPlayer({ autoPlay = true }: FloatingMusicPl
 
   const progressPercentage = duration ? (currentTime / duration) * 100 : 0;
 
-  if (!isVisible) return null;
-
   return (
     <>
       <audio
         ref={audioRef}
         src={currentSong.src}
-        volume={isMuted ? 0 : volume}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
       />
@@ -572,7 +562,7 @@ export default function FloatingMusicPlayer({ autoPlay = true }: FloatingMusicPl
       </div>
 
       {/* Custom Styles */}
-      <style jsx>{`
+      <style>{`
         @keyframes fadeInUp {
           from {
             opacity: 0;

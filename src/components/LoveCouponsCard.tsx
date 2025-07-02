@@ -49,7 +49,7 @@ const LoveCouponsCard = () => {
   )
   const [isRevealing, setIsRevealing] = useState(false)
 
-  const getRandomCoupon = (current) => {
+  const getRandomCoupon = (current: number) => {
     let newCoupon
     do {
       newCoupon = Math.floor(Math.random() * coupons.length)

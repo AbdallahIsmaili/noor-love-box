@@ -4,6 +4,7 @@ import { Heart, Sparkles, Stars } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import toast from 'react-hot-toast'
+import { easeInOut } from 'framer-motion'
 
 interface AuthPageProps {
   onAuth: (name: string) => void
@@ -65,7 +66,7 @@ export default function AuthPage({ onAuth }: AuthPageProps) {
               duration: 8 + Math.random() * 4,
               delay: i * 0.5,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: easeInOut
             }}
           >
             <Stars className="w-6 h-6 text-pink-400" />
@@ -99,7 +100,7 @@ export default function AuthPage({ onAuth }: AuthPageProps) {
                 transition={{ 
                   duration: 4, 
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: easeInOut
                 }}
                 className="inline-block mb-6 relative"
               >
@@ -115,7 +116,7 @@ export default function AuthPage({ onAuth }: AuthPageProps) {
                   transition={{ 
                     duration: 2, 
                     repeat: Infinity,
-                    ease: "easeInOut"
+                    ease: easeInOut
                   }}
                   className="absolute inset-0"
                 >
@@ -236,7 +237,7 @@ export default function AuthPage({ onAuth }: AuthPageProps) {
                   transition={{ 
                     duration: 1.5, 
                     repeat: Infinity,
-                    ease: "easeInOut"
+                    ease: easeInOut
                   }}
                   className="inline-block text-pink-500"
                 >

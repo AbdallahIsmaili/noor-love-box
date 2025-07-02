@@ -52,7 +52,7 @@ function App() {
     }, 1500); // Increased delay slightly for better UX
   };
 
-  const handlePageChange = (page: 'main' | 'ask') => {
+  const handlePageChange = (page: 'main' | 'ask' | 'notes') => {
     setCurrentPage(page)
   }
 
