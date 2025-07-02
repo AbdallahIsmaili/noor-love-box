@@ -51,10 +51,10 @@ const responses: ResponsesCollection = {
   // About Noor - Enhanced with more variations
   aboutNoor: [
     { 
-      keywords: ["my", "name", "noor", "zahar", "what's", "whats", "nam", "nme", "called"], 
+      keywords: ["my", "name", "noor", "my life", "what's", "whats", "nam", "nme", "called"], 
       responses: [
-        "Your name is Noor, but I also call you Zahar, Babygirl, and sometimes Mrs. ISMAILI 😍",
-        "Noor, Zahar, Babygirl, my future wife - you have many beautiful names 💖"
+        "Your name is Noor, but I also call you my life, Babygirl, and sometimes Mrs. ISMAILI 😍",
+        "Noor, my life, Babygirl, my future wife - you have many beautiful names 💖"
       ],
       priority: 4
     },
@@ -67,10 +67,10 @@ const responses: ResponsesCollection = {
       priority: 3
     },
     { 
-      keywords: ["nickname", "call", "zahar", "babygirl", "what", "do"], 
+      keywords: ["nickname", "call", "my life", "babygirl", "what", "do"], 
       responses: [
-        "Babygirl 👑, Zahar, Mrs. ISMAILI, cutie pie, and sometimes… jealous princess 🔪😂",
-        "My personal favorites? Zahar for when you're sweet, Mrs. ISMAILI for when you're mine 💍"
+        "Babygirl 👑, my life, Mrs. ISMAILI, cutie pie, and sometimes… jealous princess 🔪😂",
+        "My personal favorites? my life for when you're sweet, Mrs. ISMAILI for when you're mine 💍"
       ],
       priority: 3
     },
@@ -519,7 +519,7 @@ const responses: ResponsesCollection = {
     },
     {
       keywords: ["hello", "talk", "chat"],
-      responses: ["What's on your mind, Zahar? 💭"],
+      responses: ["What's on your mind, my life? 💭"],
     },
     {
       keywords: ["listening", "you there", "are you there"],
